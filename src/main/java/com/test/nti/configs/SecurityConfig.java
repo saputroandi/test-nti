@@ -5,7 +5,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -20,6 +23,7 @@ import com.test.nti.services.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -29,13 +33,12 @@ public class SecurityConfig {
     private JwtAuthFilter jwtAuthFilter;
 
     @Bean
-    @Order(1)
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        req -> req.requestMatchers("/auth/**")
+                        req -> req.requestMatchers("/api/auth/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
@@ -48,6 +51,12 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean

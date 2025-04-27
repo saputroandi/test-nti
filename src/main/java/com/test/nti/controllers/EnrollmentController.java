@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +31,7 @@ public class EnrollmentController {
     private EnrollementService enrollementService;
 
     @PostMapping("/{classId}")
+    @PreAuthorize("hasAnyRole({'TEACHER', 'ADMIN'})")
     public ResponseEntity<ApiResponseDto<EnrollmentResponseDto, Void>> enrollStrudentIntoClass(
             @PathVariable Long classId, @RequestBody EnrollmentRequestDto requestDto) {
         EnrollmentResponseDto enrollmentResponseDto = enrollementService

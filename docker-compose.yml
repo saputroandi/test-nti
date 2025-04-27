@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  db:
+  db-school:
     image: postgres:16.1-alpine
-    container_name: nti
+    container_name: nti-db
     # restart: unless-stopped
     ports:
       - "5432:5432"
@@ -14,6 +14,17 @@ services:
       - ./volume:/var/lib/mysql:z
     networks:
       - app_network
+  app-authserver:
+    depends_on:
+      - db
+    container_name: nti-school-app
+    build: .
+    restart: on-failure
+    ports:
+      - 8080:8080
+    networks:
+      - app_network
+
 
 networks:
   app_network:
