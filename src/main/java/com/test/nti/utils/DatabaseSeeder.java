@@ -1,6 +1,7 @@
 package com.test.nti.utils;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.test.nti.entities.UserEntity;
@@ -15,21 +16,28 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     private final UserRepository userRepository;
 
-    public DatabaseSeeder(UserRepository userRepository) {
+    private final PasswordEncoder encoder;
+
+    public DatabaseSeeder(UserRepository userRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
+        this.encoder = encoder;
     }
 
     @Override
     public void run(String... args) throws Exception {
         userRepository.deleteAll();
 
-        UserEntity admin = new UserEntity("admin@example.com", "passwordadmin", Role.ADMIN);
+        UserEntity admin = new UserEntity("admin@example.com", encoder.encode("passwordadmin"), "admin", Role.ADMIN);
         
-        UserEntity teacher = new UserEntity("teacher@example.com", "passwordteacher", Role.TEACHER);
+        UserEntity teacher = new UserEntity("teacher@example.com", encoder.encode("passwordteacher"), "arum",
+                Role.TEACHER);
 
-        UserEntity student1 = new UserEntity("student1@example.com", "passwordstudent1", Role.STUDENT);
-        UserEntity student2 = new UserEntity("student2@example.com", "passwordstudent2", Role.STUDENT);
-        UserEntity student3 = new UserEntity("student3@example.com", "passwordstudent3", Role.STUDENT);
+        UserEntity student1 = new UserEntity("student1@example.com", encoder.encode("passwordstudent1"), "andi",
+                Role.STUDENT);
+        UserEntity student2 = new UserEntity("student2@example.com", encoder.encode("passwordstudent2"), "budi",
+                Role.STUDENT);
+        UserEntity student3 = new UserEntity("student3@example.com", encoder.encode("passwordstudent3"), "maulana",
+                Role.STUDENT);
 
         userRepository.save(admin);
         userRepository.save(teacher);

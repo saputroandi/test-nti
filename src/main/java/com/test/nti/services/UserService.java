@@ -21,22 +21,26 @@ public class UserService {
 
     public List<UserResponseDto> getAllUser(Pageable page) {
         return userRepository.findAll(page).stream()
-                .map(user -> UserResponseDto.builder().id(user.getId()).email(user.getEmail()).build()).toList();
+                .map(user -> UserResponseDto.builder().id(user.getId()).email(user.getEmail()).name(user.getName())
+                        .role(user.getRole().toString())
+                        .build())
+                .toList();
     }
 
     public UserResponseDto getUser(Long id) {
         UserEntity res = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("user tidak di temukan"));
 
-        return UserResponseDto.builder().id(res.getId()).email(res.getEmail()).build();
+        return UserResponseDto.builder().id(res.getId()).email(res.getEmail()).role(res.getRole().toString())
+                .name(res.getName()).build();
     }
 
     public UserResponseDto updateUser(Long id, UserUpdateRequestDto updateRequestDto) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("user tidak di temukan"));
 
-        if (!updateRequestDto.getEmail().isEmpty()) {
-            user.setEmail(updateRequestDto.getEmail());
+        if (!updateRequestDto.getName().isEmpty()) {
+            user.setEmail(updateRequestDto.getName());
         }
 
         if (!updateRequestDto.getPassword().isEmpty()) {
@@ -45,7 +49,9 @@ public class UserService {
 
         UserEntity updatedUser = userRepository.save(user);
 
-        return UserResponseDto.builder().id(updatedUser.getId()).email(updatedUser.getEmail()).build();
+        return UserResponseDto.builder().id(updatedUser.getId()).role(updatedUser.getRole().toString())
+                .email(updatedUser.getEmail())
+                .name(updatedUser.getName()).build();
     }
 
     public void deleteUser(Long id) {
